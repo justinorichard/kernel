@@ -3,6 +3,8 @@
 #include "idt.h"
 #include "kstdio.h"
 #include "kstring.h"
+#include "pic.h"
+#include "port.h"
 #include "stivale2.h"
 #include "util.h"
 
@@ -69,11 +71,9 @@ void term_setup(struct stivale2_struct *hdr) {
 }
 
 void _start(struct stivale2_struct *hdr) {
-    // We've booted! Let's start processing tags passed to use from the
-    // bootloader
-    term_setup(hdr);
-
-    idt_setup();
+    term_setup(hdr);  // set up print functions
+    pic_init();       // init programmable interrupt controller
+    idt_setup();      // set up interrupt descriptor table
 
     // Print a greeting
     kprintf("Hello Kernel!\n");
@@ -95,9 +95,5 @@ void _start(struct stivale2_struct *hdr) {
         }
     }
 
-    int *p = (int *)0x1;
-    *p = 123;
-
-    // We're done, just hang...
     halt();
 }

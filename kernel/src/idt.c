@@ -1,7 +1,10 @@
 #include "idt.h"
 
+#include "keyboard.h"
 #include "kstdio.h"
 #include "kstring.h"
+#include "pic.h"
+#include "port.h"
 #include "util.h"
 
 idt_entry_t idt[256];
@@ -43,6 +46,10 @@ void idt_setup() {
     for (uint8_t i = 1; i <= 21; i++) {
         idt_set_handler(i, &example_handler_ec, IDT_TYPE_INTERRUPT);
     }
+
+    // set up the handler for pic
+    idt_set_handler(IRQ1_INTERRUPT, &keyboard_handler, IDT_TYPE_INTERRUPT);
+    pic_unmask_irq(1);
 
     // Step 3: Install the IDT
     idt_record_t record = {.size = sizeof(idt), .base = idt};
