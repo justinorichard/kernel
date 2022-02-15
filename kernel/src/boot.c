@@ -1,6 +1,7 @@
 #include <stddef.h>
 
 #include "idt.h"
+#include "keyboard.h"
 #include "kstdio.h"
 #include "kstring.h"
 #include "pic.h"
@@ -94,6 +95,9 @@ void _start(struct stivale2_struct *hdr) {
                     entry.base + entry.length + hhdm->addr);
         }
     }
+
+    char ch = kgetc();
+    kprintf("input: %c\n", ch);
 
     halt();
 }
