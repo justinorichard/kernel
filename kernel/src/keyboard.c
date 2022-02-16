@@ -17,10 +17,10 @@ int scancode_table[] = {
     0, 92, 122, 120, 99, 118, 98, 110, 109, 44, 46, 47, 0};
 
 // circular buffer
-int buffer[BUFFER_SIZE];
-int buffer_start = 0;
-int buffer_end = 0;
-int buffer_count = 0;
+volatile int buffer[BUFFER_SIZE];
+volatile int buffer_start = 0;
+volatile int buffer_end = 0;
+volatile int buffer_count = 0;
 
 __attribute__((interrupt)) void keyboard_handler(interrupt_context_t *ctx) {
     uint8_t scancode = inb(0x60);  // read a keyboard scan code
@@ -34,7 +34,6 @@ __attribute__((interrupt)) void keyboard_handler(interrupt_context_t *ctx) {
             buffer_count += 1;
         }
     }
-    kprintf("input received!\n");
 
     outb(PIC1_COMMAND, PIC_EOI);  // end of interrupt message
 }
@@ -42,10 +41,8 @@ __attribute__((interrupt)) void keyboard_handler(interrupt_context_t *ctx) {
 char kgetc() {
     // wait for new input in the buffer
     while (buffer_count == 0) {
-        kprintf("wait for buffer\n");
     }
 
-    kprintf("escape from loop\n");
     // move buffer start to next pos
     char rtr = buffer[buffer_start];
     buffer_start = (buffer_start + 1) % BUFFER_SIZE;
