@@ -4,6 +4,7 @@
 #include "keyboard.h"
 #include "kstdio.h"
 #include "kstring.h"
+#include "page.h"
 #include "pic.h"
 #include "port.h"
 #include "stivale2.h"
@@ -72,32 +73,32 @@ void term_setup(struct stivale2_struct *hdr) {
 }
 
 void _start(struct stivale2_struct *hdr) {
-    term_setup(hdr);  // set up print functions
-    pic_init();       // init programmable interrupt controller
-    idt_setup();      // set up interrupt descriptor table
+    // Get virutal memory struct
+    struct stivale2_struct_tag_hhdm *hhdm =
+        find_tag(hdr, STIVALE2_STRUCT_TAG_HHDM_ID);
+    // Get memmap struct
+    struct stivale2_struct_tag_memmap *memmap =
+        find_tag(hdr, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+
+    term_setup(hdr);           // set up print functions
+    pic_init();                // init programmable interrupt controller
+    idt_setup();               // set up interrupt descriptor table
+    init_alloc(memmap, hhdm);  // page allocator
 
     // Print a greeting
     kprintf("Hello Kernel!\n");
 
-    // Get virutal memory struct
-    struct stivale2_struct_tag_hhdm *hhdm =
-        find_tag(hdr, STIVALE2_STRUCT_TAG_HHDM_ID);
-
-    // Get memmap struct
-    struct stivale2_struct_tag_memmap *memmap =
-        find_tag(hdr, STIVALE2_STRUCT_TAG_MEMMAP_ID);
-    kprintf("Usable Memory:\n");
-    for (uint64_t i = 0; i < memmap->entries; i++) {
-        struct stivale2_mmap_entry entry = memmap->memmap[i];
-        if (entry.type == 1) {  // print only usable memory
-            kprintf("  %x-%x mapped at %x-%x\n", entry.base,
-                    entry.base + entry.length, entry.base + hhdm->addr,
-                    entry.base + entry.length + hhdm->addr);
-        }
+    uintptr_t root = read_cr3() & 0xFFFFFFFFFFFFF000;
+    int *p = (int *)0x50004000;
+    bool result = vm_map(root, (uintptr_t)p, true, true, false);
+    // bool result = true;
+    translate(p);
+    if (result) {
+        *p = 123;
+        kprintf("Stored %d at %p\n", *p, p);
+    } else {
+        kprintf("vm_map failed with an error\n");
     }
-
-    char ch = kgetc();
-    kprintf("input: %c\n", ch);
 
     halt();
 }
