@@ -31,6 +31,7 @@ void kprint_r(uint64_t value, uint8_t radix) {
     // corner case
     if (value == 0) {
         kprint_c('0');
+        return;
     }
 
     while ((n * radix <= value) && (n * radix > n)) {
