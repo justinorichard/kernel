@@ -3,19 +3,18 @@
 
 #include <stdint.h>
 
-#if (defined (_STIVALE2_SPLIT_64) && defined (__i386__)) || defined(_STIVALE2_SPLIT_64_FORCE)
+#if (defined(_STIVALE2_SPLIT_64) && defined(__i386__)) || defined(_STIVALE2_SPLIT_64_FORCE)
 
 #define _stivale2_split64(NAME) \
-    union {                    \
-        uint32_t NAME;         \
-        uint32_t NAME##_lo;    \
-    };                         \
+    union {                     \
+        uint32_t NAME;          \
+        uint32_t NAME##_lo;     \
+    };                          \
     uint32_t NAME##_hi
 
 #else
 
-#define _stivale2_split64(NAME) \
-    uint64_t NAME
+#define _stivale2_split64(NAME) uint64_t NAME
 
 #endif
 
@@ -120,8 +119,8 @@ struct stivale2_struct {
 #define STIVALE2_STRUCT_TAG_PMRS_ID 0x5df266a64047b6bd
 
 #define STIVALE2_PMR_EXECUTABLE ((uint64_t)1 << 0)
-#define STIVALE2_PMR_WRITABLE   ((uint64_t)1 << 1)
-#define STIVALE2_PMR_READABLE   ((uint64_t)1 << 2)
+#define STIVALE2_PMR_WRITABLE ((uint64_t)1 << 1)
+#define STIVALE2_PMR_READABLE ((uint64_t)1 << 2)
 
 struct stivale2_pmr {
     uint64_t base;
@@ -152,14 +151,14 @@ struct stivale2_struct_tag_cmdline {
 
 #define STIVALE2_STRUCT_TAG_MEMMAP_ID 0x2187f79e8612de07
 
-#define STIVALE2_MMAP_USABLE                 1
-#define STIVALE2_MMAP_RESERVED               2
-#define STIVALE2_MMAP_ACPI_RECLAIMABLE       3
-#define STIVALE2_MMAP_ACPI_NVS               4
-#define STIVALE2_MMAP_BAD_MEMORY             5
+#define STIVALE2_MMAP_USABLE 1
+#define STIVALE2_MMAP_RESERVED 2
+#define STIVALE2_MMAP_ACPI_RECLAIMABLE 3
+#define STIVALE2_MMAP_ACPI_NVS 4
+#define STIVALE2_MMAP_BAD_MEMORY 5
 #define STIVALE2_MMAP_BOOTLOADER_RECLAIMABLE 0x1000
-#define STIVALE2_MMAP_KERNEL_AND_MODULES     0x1001
-#define STIVALE2_MMAP_FRAMEBUFFER            0x1002
+#define STIVALE2_MMAP_KERNEL_AND_MODULES 0x1001
+#define STIVALE2_MMAP_FRAMEBUFFER 0x1002
 
 struct stivale2_mmap_entry {
     uint64_t base;
@@ -185,14 +184,14 @@ struct stivale2_struct_tag_framebuffer {
     uint16_t framebuffer_height;
     uint16_t framebuffer_pitch;
     uint16_t framebuffer_bpp;
-    uint8_t  memory_model;
-    uint8_t  red_mask_size;
-    uint8_t  red_mask_shift;
-    uint8_t  green_mask_size;
-    uint8_t  green_mask_shift;
-    uint8_t  blue_mask_size;
-    uint8_t  blue_mask_shift;
-    uint8_t  unused;
+    uint8_t memory_model;
+    uint8_t red_mask_size;
+    uint8_t red_mask_shift;
+    uint8_t green_mask_size;
+    uint8_t green_mask_shift;
+    uint8_t blue_mask_size;
+    uint8_t blue_mask_shift;
+    uint8_t unused;
 };
 
 #define STIVALE2_STRUCT_TAG_EDID_ID 0x968609d7af96b845
@@ -200,7 +199,7 @@ struct stivale2_struct_tag_framebuffer {
 struct stivale2_struct_tag_edid {
     struct stivale2_tag tag;
     uint64_t edid_size;
-    uint8_t  edid_information[];
+    uint8_t edid_information[];
 };
 
 #define STIVALE2_STRUCT_TAG_TEXTMODE_ID 0x38d74c23e0dca893
@@ -294,7 +293,7 @@ struct stivale2_guid {
     uint32_t a;
     uint16_t b;
     uint16_t c;
-    uint8_t  d[8];
+    uint8_t d[8];
 };
 
 struct stivale2_struct_tag_boot_volume {

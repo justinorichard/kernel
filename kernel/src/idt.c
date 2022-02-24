@@ -14,8 +14,7 @@ __attribute__((interrupt)) void example_handler(interrupt_context_t *ctx) {
     halt();
 }
 
-__attribute__((interrupt)) void example_handler_ec(interrupt_context_t *ctx,
-                                                   uint64_t ec) {
+__attribute__((interrupt)) void example_handler_ec(interrupt_context_t *ctx, uint64_t ec) {
     kprintf("example interrupt handler (ec=%d)\n", ec);
     halt();
 }

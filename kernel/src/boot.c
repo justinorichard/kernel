@@ -13,18 +13,14 @@
 // Reserve space for the stack
 static uint8_t stack[8192];
 
-static struct stivale2_tag unmap_null_hdr_tag = {
-    .identifier = STIVALE2_HEADER_TAG_UNMAP_NULL_ID, .next = 0};
+static struct stivale2_tag unmap_null_hdr_tag = {.identifier = STIVALE2_HEADER_TAG_UNMAP_NULL_ID, .next = 0};
 
 // Request a terminal from the bootloader
 static struct stivale2_header_tag_terminal terminal_hdr_tag = {
-    .tag = {.identifier = STIVALE2_HEADER_TAG_TERMINAL_ID,
-            .next = (uintptr_t)&unmap_null_hdr_tag},
-    .flags = 0};
+    .tag = {.identifier = STIVALE2_HEADER_TAG_TERMINAL_ID, .next = (uintptr_t)&unmap_null_hdr_tag}, .flags = 0};
 
 // Declare the header for the bootloader
-__attribute__((section(".stivale2hdr"),
-               used)) static struct stivale2_header stivale_hdr = {
+__attribute__((section(".stivale2hdr"), used)) static struct stivale2_header stivale_hdr = {
     // Use ELF file's default entry point
     .entry_point = 0,
 
@@ -62,8 +58,7 @@ void *find_tag(struct stivale2_struct *hdr, uint64_t id) {
 
 void term_setup(struct stivale2_struct *hdr) {
     // Look for a terminal tag
-    struct stivale2_struct_tag_terminal *tag =
-        find_tag(hdr, STIVALE2_STRUCT_TAG_TERMINAL_ID);
+    struct stivale2_struct_tag_terminal *tag = find_tag(hdr, STIVALE2_STRUCT_TAG_TERMINAL_ID);
 
     // Make sure we find a terminal tag
     if (tag == NULL) halt();
@@ -74,11 +69,9 @@ void term_setup(struct stivale2_struct *hdr) {
 
 void _start(struct stivale2_struct *hdr) {
     // Get virutal memory struct
-    struct stivale2_struct_tag_hhdm *hhdm =
-        find_tag(hdr, STIVALE2_STRUCT_TAG_HHDM_ID);
+    struct stivale2_struct_tag_hhdm *hhdm = find_tag(hdr, STIVALE2_STRUCT_TAG_HHDM_ID);
     // Get memmap struct
-    struct stivale2_struct_tag_memmap *memmap =
-        find_tag(hdr, STIVALE2_STRUCT_TAG_MEMMAP_ID);
+    struct stivale2_struct_tag_memmap *memmap = find_tag(hdr, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
     term_setup(hdr);           // set up print functions
     pic_init();                // init programmable interrupt controller

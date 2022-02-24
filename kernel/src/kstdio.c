@@ -20,9 +20,7 @@ void kprint_s(const char *str) {
 }
 
 // only support up to Hexadecimal
-char radix_digit_map(uint8_t radix) {
-    return radix <= 9 ? '0' + radix : 'a' + (radix - 10);
-}
+char radix_digit_map(uint8_t radix) { return radix <= 9 ? '0' + radix : 'a' + (radix - 10); }
 
 // print number respect to its radix
 void kprint_r(uint64_t value, uint8_t radix) {

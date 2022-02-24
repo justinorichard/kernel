@@ -14,8 +14,7 @@ uintptr_t read_cr3();
  */
 void translate(void* address);
 
-void init_alloc(struct stivale2_struct_tag_memmap* mmemap,
-                struct stivale2_struct_tag_hhdm* hhdm);
+void init_alloc(struct stivale2_struct_tag_memmap* mmemap, struct stivale2_struct_tag_hhdm* hhdm);
 
 /**
  * Allocate a page of physical memory.
@@ -41,5 +40,4 @@ void pmem_free(uintptr_t p);
  * \param executable Should the page be executable?
  * \returns true if the mapping succeeded, or false if there was an error
  */
-bool vm_map(uintptr_t root, uintptr_t address, bool user, bool writable,
-            bool executable);
+bool vm_map(uintptr_t root, uintptr_t address, bool user, bool writable, bool executable);

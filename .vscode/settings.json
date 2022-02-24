@@ -1,6 +1,6 @@
 {
   "C_Cpp.intelliSenseEngine": "Default",
-  "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4 }",
+  "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: Google, IndentWidth: 4, ColumnLimit: 120 }",
   "files.associations": {
     "*.hh": "cpp",
     "*.cc": "cpp",

@@ -112,24 +112,21 @@ void pmem_free(uintptr_t p) {
     free_list.head = new_head;
 }
 
-void init_alloc(struct stivale2_struct_tag_memmap* memmap,
-                struct stivale2_struct_tag_hhdm* hhdm) {
+void init_alloc(struct stivale2_struct_tag_memmap* memmap, struct stivale2_struct_tag_hhdm* hhdm) {
     // init free list
     free_list.head = NULL;
 
     for (uint64_t i = 0; i < memmap->entries; i++) {
         struct stivale2_mmap_entry entry = memmap->memmap[i];
         if (entry.type == 1) {  // entry is an usable memory
-            for (uint64_t curr = entry.base; curr < entry.base + entry.length;
-                 curr += PAGE_SIZE) {
+            for (uint64_t curr = entry.base; curr < entry.base + entry.length; curr += PAGE_SIZE) {
                 pmem_free(curr);
             }
         }
     }
 }
 
-bool vm_map(uintptr_t root, uintptr_t address, bool user, bool writable,
-            bool executable) {
+bool vm_map(uintptr_t root, uintptr_t address, bool user, bool writable, bool executable) {
     // init linear address
     linear_address_t* laddress = &address;
     uint16_t addresses[] = {
@@ -145,8 +142,7 @@ bool vm_map(uintptr_t root, uintptr_t address, bool user, bool writable,
     for (int level = 4; level >= 1; level--) {
         pt_entry_t* page_entry = table_entry + addresses[level];
 
-        kprintf("level %d table: 0x%x entry: 0x%x\n", level, table_entry,
-                page_entry);
+        kprintf("level %d table: 0x%x entry: 0x%x\n", level, table_entry, page_entry);
 
         // create new page if not present
         if (!page_entry->present) {
