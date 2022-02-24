@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "kstdio.h"
 #include "kstring.h"
 
 #define PAGE_SIZE 0x1000
