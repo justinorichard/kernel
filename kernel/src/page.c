@@ -35,7 +35,10 @@ typedef struct free_list {
     list_node_t* head;
 } free_list_t;
 
-free_list_t free_list;
+free_list_t free_list;    // lsit of free pages
+uint64_t virtual_offset;  // hhdm virtual address offset
+
+uintptr_t add_virtual_offset(uintptr_t ptr) { return ptr + virtual_offset; }
 
 uintptr_t read_cr3() {
     uintptr_t value;
@@ -73,6 +76,8 @@ void print_table_entry(pt_entry_t* page_entry) {
 
 pt_entry_t* translate_entry(pt_entry_t* page_start, int level, uint16_t index) {
     pt_entry_t* page_entry = page_start + index;
+    page_entry = add_virtual_offset(page_entry);
+
     kprintf("  Level %d (index %d of 0x%x)\n", level, index, page_start);
     kprintf("    ");
     print_table_entry(page_entry);
@@ -101,20 +106,21 @@ uintptr_t pmem_alloc() {
     }
 
     uintptr_t rtr = free_list.head;
-    free_list.head = free_list.head->next;
+    list_node_t* nxt = ((list_node_t*)add_virtual_offset(free_list.head))->next;
+    free_list.head = nxt;
 
     return rtr;
 }
 
 void pmem_free(uintptr_t p) {
-    list_node_t* new_head = p;
+    list_node_t* new_head = add_virtual_offset(p);
     new_head->next = free_list.head;
-    free_list.head = new_head;
+    free_list.head = p;
 }
 
 void init_alloc(struct stivale2_struct_tag_memmap* memmap, struct stivale2_struct_tag_hhdm* hhdm) {
-    // init free list
-    free_list.head = NULL;
+    free_list.head = NULL;  // init free list
+    virtual_offset = hhdm->addr;
 
     for (uint64_t i = 0; i < memmap->entries; i++) {
         struct stivale2_mmap_entry entry = memmap->memmap[i];
@@ -141,12 +147,14 @@ bool vm_map(uintptr_t root, uintptr_t address, bool user, bool writable, bool ex
 
     for (int level = 4; level >= 1; level--) {
         pt_entry_t* page_entry = table_entry + addresses[level];
+        page_entry = add_virtual_offset(page_entry);
 
         kprintf("level %d table: 0x%x entry: 0x%x\n", level, table_entry, page_entry);
 
         // create new page if not present
         if (!page_entry->present) {
             kprintf(" not present, make new page\n");
+
             // allocate new page
             uintptr_t new_page = pmem_alloc();
             if (new_page == NULL) {  // run out of page
