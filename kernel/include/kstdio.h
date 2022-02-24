@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 typedef void (*term_write_t)(const char *, size_t);
 
 void set_term_write(term_write_t fn);

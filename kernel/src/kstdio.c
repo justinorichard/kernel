@@ -1,8 +1,8 @@
 #include "kstdio.h"
 
-#include <stddef.h>
 #include <stdint.h>
 
+#include "kstdio.h"
 #include "kstring.h"
 #include "stdarg.h"
 
