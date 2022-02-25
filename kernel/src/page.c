@@ -46,6 +46,14 @@ uintptr_t read_cr3() {
     return value;
 }
 
+uint64_t read_cr0() {
+    uintptr_t value;
+    __asm__("mov %%cr0, %0" : "=r"(value));
+    return value;
+}
+
+void write_cr0(uint64_t value) { __asm__("mov %0, %%cr0" : : "r"(value)); }
+
 void print_table_entry(pt_entry_t* page_entry) {
     // check if entry present
     if (!page_entry->present) {
@@ -121,6 +129,11 @@ void pmem_free(uintptr_t p) {
 void init_alloc(struct stivale2_struct_tag_memmap* memmap, struct stivale2_struct_tag_hhdm* hhdm) {
     free_list.head = NULL;  // init free list
     virtual_offset = hhdm->addr;
+
+    // Enable write protection
+    uint64_t cr0 = read_cr0();
+    cr0 |= 0x10000;
+    write_cr0(cr0);
 
     for (uint64_t i = 0; i < memmap->entries; i++) {
         struct stivale2_mmap_entry entry = memmap->memmap[i];
