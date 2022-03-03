@@ -8,6 +8,7 @@
 #include "pic.h"
 #include "port.h"
 #include "stivale2.h"
+#include "syscall.h"
 #include "util.h"
 
 // Reserve space for the stack
@@ -77,20 +78,18 @@ void _start(struct stivale2_struct *hdr) {
     pic_init();                // init programmable interrupt controller
     idt_setup();               // set up interrupt descriptor table
     init_alloc(memmap, hhdm);  // page allocator
+    syscall_init();
 
     // Print a greeting
     kprintf("Hello Kernel!\n");
 
-    uintptr_t root = read_cr3() & 0xFFFFFFFFFFFFF000;
-    int *p = (int *)0x50004000;
-    bool result = vm_map(root, (uintptr_t)p, true, true, false);
-    // bool result = true;
-    translate(p);
-    if (result) {
-        *p = 123;
-        kprintf("Stored %d at %p\n", *p, p);
+    char buf[6];
+    long rc = syscall(SYS_read, 0, buf, 5);
+    if (rc <= 0) {
+        kprintf("read failed\n");
     } else {
-        kprintf("vm_map failed with an error\n");
+        buf[rc] = '\0';
+        kprintf("read '%s'\n", buf);
     }
 
     halt();

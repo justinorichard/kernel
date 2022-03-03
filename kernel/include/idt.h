@@ -41,3 +41,5 @@ typedef struct idt_record {
 } __attribute__((packed)) idt_record_t;
 
 void idt_setup();
+
+void idt_set_handler(uint8_t index, void *fn, uint8_t type);
