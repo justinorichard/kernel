@@ -5,10 +5,6 @@
     "*.hh": "cpp",
     "*.cc": "cpp",
     "*.t": "ignore",
-    "stdint.h": "c",
-    "stivale2.h": "c",
-    "stddef.h": "c",
-    "kstdio.h": "c",
-    "kstring.h": "c"
+    "*.h": "c",
   }
 }
