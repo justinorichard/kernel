@@ -2,3 +2,4 @@ limine
 boot.iso
 kernel/kernel.elf
 .vscode
+.DS_Store
