@@ -1,10 +1,10 @@
 #include <stddef.h>
+#include <string.h>
 
 #include "elf.h"
 #include "idt.h"
 #include "keyboard.h"
 #include "kstdio.h"
-#include "kstring.h"
 #include "page.h"
 #include "pic.h"
 #include "port.h"

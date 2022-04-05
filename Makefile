@@ -1,10 +1,6 @@
 .PHONY: all
 all: boot.iso
 
-.PHONY: init
-init:
-	$(MAKE) -C init
-
 .PHONY: run
 run: boot.iso
 	./run.sh
@@ -12,12 +8,21 @@ run: boot.iso
 .PHONY: clean
 clean:
 	rm -f iso_root boot.iso
+	$(MAKE) -C stdlib clean
 	$(MAKE) -C kernel clean
 	$(MAKE) -C init clean
 
+.PHONY: stdlib
+stdlib:
+	$(MAKE) -C stdlib
+
 .PHONY: kernel
-kernel:
+kernel: stdlib
 	$(MAKE) -C kernel
+
+.PHONY: init
+init: stdlib
+	$(MAKE) -C init
 
 limine:
 	git clone https://github.com/limine-bootloader/limine.git --branch=v2.0-branch-binary --depth=1

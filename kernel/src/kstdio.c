@@ -1,9 +1,9 @@
 #include "kstdio.h"
 
 #include <stdint.h>
+#include <string.h>
 
 #include "kstdio.h"
-#include "kstring.h"
 #include "stdarg.h"
 
 term_write_t term_write = NULL;

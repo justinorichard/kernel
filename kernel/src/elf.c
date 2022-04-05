@@ -1,7 +1,8 @@
 #include "elf.h"
 
+#include <string.h>
+
 #include "kstdio.h"
-#include "kstring.h"
 #include "page.h"
 
 /* Program header */

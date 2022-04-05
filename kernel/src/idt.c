@@ -1,8 +1,9 @@
 #include "idt.h"
 
+#include <string.h>
+
 #include "keyboard.h"
 #include "kstdio.h"
-#include "kstring.h"
 #include "pic.h"
 #include "port.h"
 #include "util.h"
