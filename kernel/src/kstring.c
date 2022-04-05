@@ -16,3 +16,11 @@ void *memset(void *s, int c, size_t n) {
     }
     return s;
 }
+
+void *memcpy(void *dest, const void *src, size_t n) {
+    char *cdest = (char *)dest;
+    char *csrc = (char *)src;
+    for (size_t i = 0; i < n; i++) {
+        cdest[i] = csrc[i];
+    }
+}
