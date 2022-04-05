@@ -1,5 +1,6 @@
 #include <stddef.h>
 
+#include "elf.h"
 #include "idt.h"
 #include "keyboard.h"
 #include "kstdio.h"
@@ -14,11 +15,13 @@
 // Reserve space for the stack
 static uint8_t stack[8192];
 
-static struct stivale2_tag unmap_null_hdr_tag = {.identifier = STIVALE2_HEADER_TAG_UNMAP_NULL_ID, .next = 0};
+static struct stivale2_tag unmap_null_hdr_tag = {.identifier = STIVALE2_HEADER_TAG_UNMAP_NULL_ID,
+                                                 .next = 0};
 
 // Request a terminal from the bootloader
 static struct stivale2_header_tag_terminal terminal_hdr_tag = {
-    .tag = {.identifier = STIVALE2_HEADER_TAG_TERMINAL_ID, .next = (uintptr_t)&unmap_null_hdr_tag}, .flags = 0};
+    .tag = {.identifier = STIVALE2_HEADER_TAG_TERMINAL_ID, .next = (uintptr_t)&unmap_null_hdr_tag},
+    .flags = 0};
 
 // Declare the header for the bootloader
 __attribute__((section(".stivale2hdr"), used)) static struct stivale2_header stivale_hdr = {
@@ -83,13 +86,15 @@ void _start(struct stivale2_struct *hdr) {
     // Print a greeting
     kprintf("Hello Kernel!\n");
 
-    char buf[6];
-    long rc = syscall(SYS_read, 0, buf, 5);
-    if (rc <= 0) {
-        kprintf("read failed\n");
-    } else {
-        buf[rc] = '\0';
-        kprintf("read '%s'\n", buf);
+    struct stivale2_struct_tag_modules *modules = find_tag(hdr, STIVALE2_STRUCT_TAG_MODULES_ID);
+    kprintf("module_count: %d\n", modules->module_count);
+    for (uint64_t i = 0; i < modules->module_count; i++) {
+        struct stivale2_module module = modules->modules[i];
+        kprintf("%s: begin: %d end: %d\n\n", module.string, module.begin, module.end);
+
+        void_function_t entry = load(module.begin, module.end - module.begin);
+        kprintf("load sucessfully!\n");
+        entry();
     }
 
     halt();
