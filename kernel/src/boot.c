@@ -10,6 +10,7 @@
 #include "port.h"
 #include "stivale2.h"
 #include "syscall.h"
+#include "term_write.h"
 #include "util.h"
 
 // Reserve space for the stack
@@ -60,27 +61,17 @@ void *find_tag(struct stivale2_struct *hdr, uint64_t id) {
     return NULL;
 }
 
-void term_setup(struct stivale2_struct *hdr) {
-    // Look for a terminal tag
-    struct stivale2_struct_tag_terminal *tag = find_tag(hdr, STIVALE2_STRUCT_TAG_TERMINAL_ID);
-
-    // Make sure we find a terminal tag
-    if (tag == NULL) halt();
-
-    // Save the term_write function pointer
-    set_term_write((term_write_t)tag->term_write);
-}
-
 void _start(struct stivale2_struct *hdr) {
     // Get virutal memory struct
     struct stivale2_struct_tag_hhdm *hhdm = find_tag(hdr, STIVALE2_STRUCT_TAG_HHDM_ID);
     // Get memmap struct
     struct stivale2_struct_tag_memmap *memmap = find_tag(hdr, STIVALE2_STRUCT_TAG_MEMMAP_ID);
 
-    term_setup(hdr);           // set up print functions
     pic_init();                // init programmable interrupt controller
     idt_setup();               // set up interrupt descriptor table
     init_alloc(memmap, hhdm);  // page allocator
+    term_init();
+    set_term_write(term_putstr);
     syscall_init();
 
     // Print a greeting

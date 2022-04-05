@@ -16,6 +16,9 @@ uintptr_t read_cr3();
  */
 void translate(void* address);
 
+// convert physical address to virtual address
+uintptr_t add_virtual_offset(uintptr_t ptr);
+
 void init_alloc(struct stivale2_struct_tag_memmap* mmemap, struct stivale2_struct_tag_hhdm* hhdm);
 
 /**
