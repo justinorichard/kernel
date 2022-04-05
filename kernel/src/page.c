@@ -179,11 +179,45 @@ bool vm_map(uintptr_t root, uintptr_t address, bool user, bool writable, bool ex
 
             // link new page to current table and set permission
             page_entry->present = true;
-            page_entry->no_execute = level == 1 ? executable : false;
+            page_entry->no_execute = level == 1 ? !executable : false;
             page_entry->user = level == 1 ? user : true;
             page_entry->writable = level == 1 ? writable : true;
             page_entry->address = new_page >> 12;
         }
+
+        table_entry = page_entry->address << 12;
+    }
+
+    return true;
+}
+
+bool vm_protect(uintptr_t root, uintptr_t address, bool user, bool writable, bool executable) {
+    // init linear address
+    linear_address_t* laddress = &address;
+    uint16_t addresses[] = {
+        0,
+        laddress->table,          // level 1
+        laddress->directory,      // level 2
+        laddress->directory_ptr,  // level 3
+        laddress->pml4,           // level 4
+    };
+
+    pt_entry_t* table_entry = root;
+
+    for (int level = 4; level >= 1; level--) {
+        pt_entry_t* page_entry = table_entry + addresses[level];
+        page_entry = add_virtual_offset(page_entry);
+
+        kprintf("level %d table: 0x%x entry: 0x%x\n", level, table_entry, page_entry);
+
+        // page is not mapped
+        if (!page_entry->present) {
+            return false;
+        }
+
+        page_entry->user |= user;
+        page_entry->no_execute &= !executable;
+        page_entry->writable |= writable;
 
         table_entry = page_entry->address << 12;
     }
