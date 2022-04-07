@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "gdt.h"
 #include "keyboard.h"
 #include "kstdio.h"
 #include "pic.h"
@@ -165,9 +166,9 @@ void idt_set_handler(uint8_t index, void *fn, uint8_t type) {
 
     idt[index].type = type;
     idt[index].present = 1;  // the entry is present
-    idt[index].dpl = 0;      // run the handler in kernel mode
+    idt[index].dpl = 3;      // run the handler in kernel mode
     idt[index].ist = 0;      // not using an interrupt stack table
-    idt[index].selector = IDT_CODE_SELECTOR;
+    idt[index].selector = KERNEL_CODE_SELECTOR;
 }
 
 /**
