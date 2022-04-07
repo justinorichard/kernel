@@ -2,10 +2,7 @@
 
 #include <stdint.h>
 
-#define SYS_read 0
-#define SYS_write 1
-
-extern int syscall(uint64_t number, ...);
+#include "syscall.h"
 
 ssize_t write(int fd, const void *buf, size_t count) { syscall(SYS_write, fd, buf, count); }
 
