@@ -15,9 +15,6 @@ void* malloc(size_t size) {
     // Round sz up to a multiple of 16
     size = ROUND_UP(size, 16);
 
-    printf("size: %d\n", size);
-    printf("space: %p\n", &space_remaining);
-
     // Do we have enoug2h space to satisfy this allocation?
     if (space_remaining < size) {
         // No. Get some more space using `mmap`

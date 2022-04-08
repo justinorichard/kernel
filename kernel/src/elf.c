@@ -63,7 +63,7 @@ void_function_t load(uintptr_t p, size_t size) {
         if (program[i].p_type != PT_LOAD) {  // not loadable
             continue;
         }
-        if (program[i].p_filesz == 0 || program[i].p_memsz == 0) {  // no size
+        if (program[i].p_memsz == 0) {  // no size
             continue;
         }
 
