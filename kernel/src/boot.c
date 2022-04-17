@@ -43,6 +43,26 @@ __attribute__((section(".stivale2hdr"), used)) static struct stivale2_header sti
     // First tag struct
     .tags = (uintptr_t)&terminal_hdr_tag};
 
+// Find a tag with a given ID
+void *find_tag(struct stivale2_struct *hdr, uint64_t id) {
+    // Start at the first tag
+    struct stivale2_tag *current = (struct stivale2_tag *)hdr->tags;
+
+    // Loop as long as there are more tags to examine
+    while (current != NULL) {
+        // Does the current tag match?
+        if (current->identifier == id) {
+            return current;
+        }
+
+        // Move to the next tag
+        current = (struct stivale2_tag *)current->next;
+    }
+
+    // No matching tag found
+    return NULL;
+}
+
 void _start(struct stivale2_struct *hdr) {
     // Get virutal memory struct
     struct stivale2_struct_tag_hhdm *hhdm = find_tag(hdr, STIVALE2_STRUCT_TAG_HHDM_ID);
@@ -54,7 +74,7 @@ void _start(struct stivale2_struct *hdr) {
     init_alloc(memmap, hhdm);  // page allocator
     term_init();
     set_term_write(term_putstr);
-    syscall_init();
+    syscall_init(find_tag(hdr, STIVALE2_STRUCT_TAG_MODULES_ID));
     gdt_setup();
 
     // Print a greeting
