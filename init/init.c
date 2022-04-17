@@ -4,20 +4,33 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "string.h"
+
 void _start() {
-    // Issue a write system call
-    write(1, "Hello world!\n", 13);
-
-    char* test_page = (char*)0x400000000;
-    test_page[0] = 'h';
-    test_page[1] = 'e';
-    test_page[2] = 'l';
-    test_page[3] = 'l';
-    test_page[4] = 'o';
-    test_page[5] = '\n';
-    write(1, test_page, 6);
-
-    // Loop forever
     for (;;) {
+        // init the input buffer
+        char input_buffer[512];
+        int next = 0;
+        memset(input_buffer, 0, 512);
+
+        // input prompt
+        printf("$ ");
+
+        char ch;
+        while (read(1, &ch, 1)) {
+            input_buffer[next] = ch;
+            printf("%c", ch);
+
+            // user done with input
+            if (ch == '\n') {
+                printf("user done\n");
+                input_buffer[next] = '\0';
+                if (exec(input_buffer, NULL) != 0) {
+                    printf("not found\n");
+                }
+            }
+
+            next += 1;
+        }
     }
 }

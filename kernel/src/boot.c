@@ -84,30 +84,10 @@ void _start(struct stivale2_struct *hdr) {
     kprintf("module_count: %d\n", modules->module_count);
     for (uint64_t i = 0; i < modules->module_count; i++) {
         struct stivale2_module module = modules->modules[i];
-        kprintf("%s: begin: %d end: %d\n\n", module.string, module.begin, module.end);
-
-        void_function_t entry = load(module.begin, module.end - module.begin);
-        kprintf("load sucessfully!\n");
-
-        // Pick an arbitrary location and size for the user-mode stack
-        uintptr_t user_stack = 0x70000000000;
-        size_t user_stack_size = 8 * PAGE_SIZE;
-
-        // Map the user-mode-stack
-        for (uintptr_t p = user_stack; p < user_stack + user_stack_size; p += 0x1000) {
-            // Map a page that is user-accessible, writable, but not executable
-            vm_map(read_cr3() & 0xFFFFFFFFFFFFF000, p, true, true, false);
+        kprintf("module: %s\n", module.string);
+        if (strcmp(module.string, "init") == 0) {
+            exec_module(module);
         }
-
-        uintptr_t test_page = 0x400000000;
-        vm_map(read_cr3() & 0xFFFFFFFFFFFFF000, test_page, true, true, false);
-
-        // And now jump to the entry point
-        usermode_entry(
-            USER_DATA_SELECTOR | 0x3,          // User data selector with priv=3
-            user_stack + user_stack_size - 8,  // Stack starts at the high address minus 8 bytes
-            USER_CODE_SELECTOR | 0x3,          // User code selector with priv=3
-            entry);                            // Jump to the entry point
     }
 
     halt();
