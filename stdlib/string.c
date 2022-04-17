@@ -11,6 +11,14 @@ size_t strlen(const char *str) {
     return len;
 }
 
+int strcmp(const char *str1, const char *str2) {
+    while (*str1 && (*str1 == *str2)) {
+        str1++;
+        str2++;
+    }
+    return *str1 - *str2;
+}
+
 void *memset(void *s, int c, size_t n) {
     char *p = s;
     for (size_t i = 0; i < n; i++) {

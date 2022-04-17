@@ -15,7 +15,7 @@ void* malloc(size_t size) {
     // Round sz up to a multiple of 16
     size = ROUND_UP(size, 16);
 
-    // Do we have enoug2h space to satisfy this allocation?
+    // Do we have enough space to satisfy this allocation?
     if (space_remaining < size) {
         // No. Get some more space using `mmap`
         size_t rounded_up = ROUND_UP(size, PAGE_SIZE);
