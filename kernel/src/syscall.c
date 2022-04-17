@@ -68,7 +68,7 @@ int sys_exec(const char *file_name, char *const argv[]) {
             return 0;
         }
     }
-    return 0;
+    return -1;
 }
 
 int sys_exit(int status) {
