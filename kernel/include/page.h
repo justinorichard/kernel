@@ -57,3 +57,6 @@ bool vm_map(uintptr_t root, uintptr_t address, bool user, bool writable, bool ex
  * \returns true if successful, or false if anything goes wrong (e.g. page is not mapped)
  */
 bool vm_protect(uintptr_t root, uintptr_t address, bool user, bool writable, bool executable);
+
+// Unmap everything in the lower half of an address space with level 4 page table at address root
+void unmap_lower_half(uintptr_t root);

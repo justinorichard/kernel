@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "gdt.h"
 #include "kstdio.h"
 #include "page.h"
 
@@ -96,4 +97,26 @@ void_function_t load(uintptr_t p, size_t size) {
     }
 
     return header->e_entry;
+}
+
+void exec_module(struct stivale2_module module) {
+    unmap_lower_half(read_cr3());
+    void_function_t entry = load(module.begin, module.end - module.begin);
+
+    // Pick an arbitrary location and size for the user-mode stack
+    uintptr_t user_stack = 0x70000000000;
+    size_t user_stack_size = 8 * PAGE_SIZE;
+
+    // Map the user-mode-stack
+    for (uintptr_t p = user_stack; p < user_stack + user_stack_size; p += 0x1000) {
+        // Map a page that is user-accessible, writable, but not executable
+        vm_map(read_cr3() & 0xFFFFFFFFFFFFF000, p, true, true, false);
+    }
+
+    // And now jump to the entry point
+    usermode_entry(
+        USER_DATA_SELECTOR | 0x3,          // User data selector with priv=3
+        user_stack + user_stack_size - 8,  // Stack starts at the high address minus 8 bytes
+        USER_CODE_SELECTOR | 0x3,          // User code selector with priv=3
+        entry);                            // Jump to the entry point}
 }

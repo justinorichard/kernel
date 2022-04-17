@@ -134,7 +134,6 @@ void pmem_free(uintptr_t p) {
     free_list.head = p;
 }
 
-// Unmap everything in the lower half of an address space with level 4 page table at address root
 void unmap_lower_half(uintptr_t root) {
     // We can reclaim memory used to hold page tables, but NOT the mapped pages
     pt_entry_t* l4_table = add_virtual_offset(root);
