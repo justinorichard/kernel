@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "debug.h"
 #include "kstdio.h"
 
 #define PAGE_SIZE 0x1000
@@ -213,11 +214,11 @@ bool vm_map(uintptr_t root, uintptr_t address, bool user, bool writable, bool ex
         pt_entry_t* page_entry = table_entry + addresses[level];
         page_entry = add_virtual_offset(page_entry);
 
-        kprintf("level %d table: 0x%x entry: 0x%x\n", level, table_entry, page_entry);
+        debugf("level %d table: 0x%x entry: 0x%x\n", level, table_entry, page_entry);
 
         // create new page if not present
         if (!page_entry->present) {
-            kprintf(" not present, make new page\n");
+            debug(" not present, make new page\n");
 
             // allocate new page
             uintptr_t new_page = pmem_alloc();
@@ -226,7 +227,7 @@ bool vm_map(uintptr_t root, uintptr_t address, bool user, bool writable, bool ex
             }
             memset(add_virtual_offset(new_page), 0, PAGE_SIZE);
 
-            kprintf(" new page %p shift %p\n", new_page, new_page >> 12);
+            debugf(" new page %p shift %p\n", new_page, new_page >> 12);
 
             // link new page to current table and set permission
             page_entry->present = true;
@@ -261,7 +262,7 @@ bool vm_protect(uintptr_t root, uintptr_t address, bool user, bool writable, boo
         pt_entry_t* page_entry = table_entry + addresses[level];
         page_entry = add_virtual_offset(page_entry);
 
-        kprintf("level %d table: 0x%x entry: 0x%x\n", level, table_entry, page_entry);
+        debugf("level %d table: 0x%x entry: 0x%x\n", level, table_entry, page_entry);
 
         // page is not mapped
         if (!page_entry->present) {

@@ -2,9 +2,11 @@
 
 #include <string.h>
 
+#include "debug.h"
 #include "gdt.h"
 #include "kstdio.h"
 #include "page.h"
+#include "stivale2.h"
 
 /* Program header */
 #define PT_NULL 0
@@ -92,8 +94,8 @@ void_function_t load(uintptr_t p, size_t size) {
             }
         }
 
-        kprintf("type: %d  vaddr: %p fsize: %d msize: %d offset: %d\n", program[i].p_type,
-                program[i].p_vaddr, program[i].p_filesz, program[i].p_memsz, program[i].p_offset);
+        debugf("type: %d  vaddr: %p fsize: %d msize: %d offset: %d\n", program[i].p_type,
+               program[i].p_vaddr, program[i].p_filesz, program[i].p_memsz, program[i].p_offset);
     }
 
     return header->e_entry;
