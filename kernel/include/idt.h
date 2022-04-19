@@ -42,4 +42,11 @@ typedef struct idt_record {
 
 void idt_setup();
 
+/**
+ * @brief idt_se_handler adds a handler to idt
+ *
+ * @param index index of idt
+ * @param fn the idt handler to add
+ * @param type handler type
+ */
 void idt_set_handler(uint8_t index, void *fn, uint8_t type);
