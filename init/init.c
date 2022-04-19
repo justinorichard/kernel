@@ -23,10 +23,10 @@ void _start() {
 
             // user done with input
             if (ch == '\n') {
-                printf("user done\n");
                 input_buffer[next] = '\0';
                 if (exec(input_buffer, NULL) != 0) {
-                    printf("not found\n");
+                    printf("%s not found\n", input_buffer);
+                    break;
                 }
             }
 
