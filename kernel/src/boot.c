@@ -79,7 +79,7 @@ void _start(struct stivale2_struct *hdr) {
     gdt_setup();
 
     // Print a greeting
-    debugf("Hello Kernel!\n");
+    debug("Hello Kernel!\n");
 
     struct stivale2_struct_tag_modules *modules = find_tag(hdr, STIVALE2_STRUCT_TAG_MODULES_ID);
     debugf("module_count: %d\n", modules->module_count);
