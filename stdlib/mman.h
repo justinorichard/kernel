@@ -20,4 +20,15 @@
 
 typedef long long off_t;
 
+/**
+ * @brief mmap maps a page to the given memory address
+ *
+ * @param addr the virtual memory address
+ * @param length ignored
+ * @param prot ignored
+ * @param flags ignored
+ * @param fd ignored
+ * @param offset ignored
+ * @return void* the left page-aligned addr
+ */
 void *mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);
