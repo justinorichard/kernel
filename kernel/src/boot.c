@@ -1,6 +1,7 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "debug.h"
 #include "elf.h"
 #include "gdt.h"
 #include "idt.h"
@@ -78,13 +79,13 @@ void _start(struct stivale2_struct *hdr) {
     gdt_setup();
 
     // Print a greeting
-    kprintf("Hello Kernel!\n");
+    debugf("Hello Kernel!\n");
 
     struct stivale2_struct_tag_modules *modules = find_tag(hdr, STIVALE2_STRUCT_TAG_MODULES_ID);
-    kprintf("module_count: %d\n", modules->module_count);
+    debugf("module_count: %d\n", modules->module_count);
     for (uint64_t i = 0; i < modules->module_count; i++) {
         struct stivale2_module module = modules->modules[i];
-        kprintf("module: %s\n", module.string);
+        debugf("module: %s\n", module.string);
         if (strcmp(module.string, "init") == 0) {
             exec_module(module);
         }
