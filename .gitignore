@@ -1,5 +1,6 @@
 limine
 boot.iso
 kernel/kernel.elf
-.vscode
+.vscode/
 .DS_Store
+*.o
